@@ -1,0 +1,69 @@
+buildscript {
+  ext {
+    springBootVersion = '1.4.0.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+  baseName = "memory-cache"
+  version = '0.1.0-SNAPSHOT'
+}
+
+//清除上次的编译过的文件
+task clear(type: Delete) {
+  delete 'build', 'target'
+}
+
+//把JAR复制到目标目录
+task release(type: Copy, dependsOn: [build]) {
+  from('build/libs') {
+    include '*.jar'
+  }
+  into('target')
+}
+
+repositories {
+  mavenLocal()
+  maven { url "http://nexus.chachazhan.com/content/groups/public/" }
+  mavenCentral()
+}
+
+dependencies {
+
+  compile group: 'io.reactivex', name: 'rxjava-async-util', version: '0.21.0'
+  compile group: 'io.reactivex', name: 'rxjava', version: '1.1.6'
+
+  compile 'org.springframework.boot:spring-boot-starter-web'
+  compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  compile 'com.alibaba:fastjson:1.2.16'
+  compile 'com.google.guava:guava:19.0'
+  compile 'org.projectlombok:lombok:1.16.+'
+  compile 'org.apache.commons:commons-lang3:3.4'
+
+  compile 'it.sauronsoftware.cron4j:cron4j:2.2.5'
+  compile 'org.mapdb:mapdb:3.0.1'
+  compile 'net.openhft:chronicle-map:3.10.1'
+
+  compile 'com.alibaba:druid:1.0.18'
+
+  compile 'io.springfox:springfox-swagger2:2.4.0'
+  compile 'io.springfox:springfox-swagger-ui:2.4.0'
+
+  testCompile 'org.springframework.boot:spring-boot-test'
+
+  runtime 'mysql:mysql-connector-java:6.0.3'
+}

@@ -1,0 +1,43 @@
+application:
+  name: memory-cache
+
+server:
+  port: 8090
+
+spring:
+  datasource:
+    druid:
+      name: dataSource
+      url: jdbc:mysql://dev4ece445fb60private.mysql.rds.aliyuncs.com:3306/mbxc_taoci?useUnicode=true&&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=TRUE&allowMultiQueries=true
+      username: mbxc_taoci
+      password: taoci_mc168
+      type: com.zaxxer.hikari.HikariDataSource
+      driverClassName: com.mysql.cj.jdbc.Driver
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+      #链接使用超过时间限制是否回收
+      removeAbandoned: true
+      #超过时间限制时间（单位秒），目前为5分钟，如果有业务处理时间超过10分钟，可以适当调整。
+      removeAbandonedTimeout: 600
+      #链接回收的时候控制台打印信息，测试环境可以加上true，线上环境false。会影响性能。
+      logAbandoned: false
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+
+logging:
+  config: classpath:logback.xml
