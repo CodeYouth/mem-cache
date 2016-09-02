@@ -15,6 +15,7 @@ import rx.util.async.Async;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * memory-cache source code.
@@ -31,16 +32,23 @@ public class KeywordLoader {
   
   private static Semaphore insertLock = new Semaphore(1);
   
+  public static AtomicBoolean loading = new AtomicBoolean(false);
+  
   @Autowired
   private KeywordRepository keywordRepository;
   
   public void load() {
+    if (!loading.compareAndSet(false, true)) {
+      log.info("关键词信息加载中...");
+      return;
+    }
+    
     log.info("加载关键词数据到内存开始...");
     int id = 0;
     int loadCount = 0;
     Long totalRecords = this.keywordRepository.count();
     
-    printMemoryUsage();
+//    printMemoryUsage();
     
     while (true) {
       List<Keyword> keywords = this.keywordRepository.getListByOptimizedPage(id, DEFAULT_SIZE);
@@ -59,7 +67,9 @@ public class KeywordLoader {
     
     log.info("加载关键词数据成功完成!!!");
     
-    printMemoryUsage();
+    loading.set(false);
+    
+//    printMemoryUsage();
   }
   
   private void insertToMemory2(List<Keyword> keywords) {
@@ -75,7 +85,7 @@ public class KeywordLoader {
         }
       }
     });
-    printMemoryUsage();
+//    printMemoryUsage();
   }
   
   private void asyncInsert(List<Keyword> keywords, int bufferSize) {
@@ -90,7 +100,7 @@ public class KeywordLoader {
         .count()
         .subscribe(i -> insertLock.release());
     
-    printMemoryUsage();
+//    printMemoryUsage();
   }
   
   private void insertToMemory(List<Keyword> keywords) {

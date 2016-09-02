@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version 0.1.0-SNAPSHOT
  * @Date 16/8/27
  */
-public class MemoryStore {
+public final class MemoryStore {
   
   public static final HashSet<Keyword> keywordStore = new HashSet<>(4500000);
   
@@ -30,4 +30,7 @@ public class MemoryStore {
       .keySerializer(Serializer.BYTE_ARRAY)
       .valueSerializer(Serializer.BYTE_ARRAY)
       .createOrOpen();
+  
+  private MemoryStore() {}
+  
 }
